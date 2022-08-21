@@ -1,6 +1,9 @@
-import { getRandomInteger } from '../utils';
+import { getRandomInteger, generateDates } from '../utils';
 import { TYPES } from './const';
 import { OFFERS } from './offers';
+
+const MIN_PRICE = 100;
+const MAX_PRICE = 600;
 
 const DESTINATIONS = [
   {
@@ -46,15 +49,18 @@ const generateType = () => {
   return TYPES[randomIndex];
 };
 
-export const generatePoint = () => (
-  {
-    basePrice: getRandomInteger(100, 500),
-    startDate: '2019-07-11T09:54:56.845Z',
-    endDate: '2019-07-11T11:22:13.375Z',
+export const generatePoint = () => {
+  const {startDate, endDate} = generateDates();
+
+  return ({
+    basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
+    startDate: startDate,
+    endDate:  endDate,
     destination: getRandomInteger(1, DESTINATIONS.length),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: [... new Set(Array.from({length: getRandomInteger(0, OFFERS.length)}, () => getRandomInteger(1, OFFERS.length - 1)))],
     type: generateType(),
   });
+};
 
 export {DESTINATIONS};

@@ -2,36 +2,21 @@ import {createElement} from '../render.js';
 import { DESTINATIONS} from '../mock/point.js';
 import { OFFERS , OFFERS_BY_TYPE} from '../mock/offers.js';
 
-const createDestionationsOptionsTemplate = (destinations) => {
-  let destinationOptions = '';
+const createDestionationsOptionsTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('\n');
 
-  for (const destination of destinations) {
-    destinationOptions = destinationOptions.concat(`<option value="${destination.name}"></option>\n`);
-  }
-  return destinationOptions;
-};
+const createAvailableOptionsTemplate = (offersByType, pointType) => {
+  const availableOffers = offersByType.find((item) => (item.type === pointType)).offers;
 
-const createAvailableOptionsTemplate = (allOffers, pointType) => {
-  const availableOffers = OFFERS_BY_TYPE.find((item) => (item.type === pointType)).offers;
+  const selectedOffers = availableOffers.map((offer) => OFFERS.find((item) => item.id === offer));
 
-  let offerOptions = '';
-
-  for (const offerId of availableOffers) {
-    for (const offer of allOffers) {
-      if (offerId === offer.id) {
-        offerOptions = offerOptions.concat(`<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').pop()}-1" type="checkbox" name="event-offer-${offer.title.split(' ').pop()}">
-          <label class="event__offer-label" for="event-offer-${offer.title.split(' ').pop()}-1">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </label>
-        </div>\n`);
-      }
-    }
-  }
-
-  return offerOptions;
+  return selectedOffers.map((offer) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').pop()}-${offer.id}" type="checkbox" name="event-offer-${offer.title.split(' ').pop()}">
+  <label class="event__offer-label" for="event-offer-${offer.title.split(' ').pop()}-${offer.id}">
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </label>
+</div>`).join('\n');
 };
 
 const createDestinationDescriptionTemplate = (destinations, pointName) => destinations.find((it) => it.name === pointName).description;
@@ -124,7 +109,7 @@ const createPointEditTemplate = (point) => {
       <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
-        ${createAvailableOptionsTemplate(OFFERS, type)}
+        ${createAvailableOptionsTemplate(OFFERS_BY_TYPE, type)}
         </div>
       </section>
       <section class="event__section  event__section--destination">
@@ -136,23 +121,26 @@ const createPointEditTemplate = (point) => {
   );
 };
 export default class PointEditView {
+  #element = null;
+  #point = null;
+
   constructor(point) {
-    this.point = point;
+    this.#point = point;
   }
 
-  getTemplate() {
-    return createPointEditTemplate(this.point);
+  get template() {
+    return createPointEditTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

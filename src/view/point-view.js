@@ -4,28 +4,17 @@ import { DESTINATIONS } from '../mock/point.js';
 import { OFFERS } from '../mock/offers.js';
 
 const createOfferTemplate = (offers) => {
-  let offerBlock = '';
-  for (const offer of offers) {
-    const offerTitle = OFFERS.find((item) => item.id === offer).title;
-    const offerPrice = OFFERS.find((item) => item.id === offer).price;
 
-    offerBlock = offerBlock.concat(`<li class="event__offer">
-    <span class="event__offer-title">${offerTitle}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offerPrice}</span>
-  </li>\n`);
-  }
-  return offerBlock;
+  const selectedOffers = offers.map((offer) => OFFERS.find((item) => item.id === offer));
+
+  return selectedOffers.map((offer) => `<li class="event__offer">
+  <span class="event__offer-title">${offer.title}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${offer.price}</span>
+</li>`).join('\n');
 };
 
-const createOffersListTemplate = (offers) => {
-  if (offers.length > 0) {
-    return `<ul class="event__selected-offers">
-    ${createOfferTemplate(offers)}
-  </ul>`;
-  }
-  return '';
-};
+const createOffersListTemplate = (offers) => offers.length > 0 ? `<ul class="event__selected-offers">${createOfferTemplate(offers)}</ul>` : '';
 
 const createPointTemplate = (point) => {
   const {basePrice, destination, startDate, endDate, isFavorite, offers, type} = point;
@@ -67,23 +56,26 @@ const createPointTemplate = (point) => {
 };
 
 export default class PointView {
+  #element = null;
+  #point = null;
+
   constructor(point) {
-    this.point = point;
+    this.#point = point;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point);
+  get template() {
+    return createPointTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

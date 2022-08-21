@@ -2,6 +2,7 @@ import { getRandomInteger } from '../utils';
 import { TYPES, OFFER_TITLES} from './const';
 
 const generateOfferTypes = () => {
+
   const offerByTypes = [];
   for (let i = 0; i < TYPES.length; i++) {
     offerByTypes.push({
