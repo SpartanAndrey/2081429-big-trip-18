@@ -9,4 +9,5 @@ export default class RouteView extends AbstractView {
   get template() {
     return createRouteTemplate();
   }
+
 }

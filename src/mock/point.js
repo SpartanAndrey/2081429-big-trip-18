@@ -1,4 +1,5 @@
-import { getRandomInteger, generateDates } from '../utils';
+import { generateDates } from '../utils/task';
+import { getRandomInteger } from '../utils/common';
 import { TYPES } from './const';
 import { OFFERS } from './offers';
 
