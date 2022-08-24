@@ -1,9 +1,9 @@
+import { render, replace } from '../framework/render.js';
 import EmptyListView from '../view/empty-list-view.js';
 import PointEditView from '../view/edit-point-view.js';
 import PointListView from '../view/point-list-view.js';
 import PointSortView from '../view/sort-view.js';
 import PointView from '../view/point-view.js';
-import {render} from '../render.js';
 
 export default class RoutePresenter {
   #routeContainer = null;
@@ -34,11 +34,11 @@ export default class RoutePresenter {
     const pointEditComponent = new PointEditView(point);
 
     const replacePointToEditForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const replaceEditFormToPoint = () => {
-      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -49,18 +49,17 @@ export default class RoutePresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditRollUpHandler(() => {
       replacePointToEditForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointEditComponent.setPointRollUpHandler(() => {
       replaceEditFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    pointEditComponent.setPointSaveHandler(() => {
       replaceEditFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
