@@ -7,9 +7,9 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const updateItem = (items, updatedItem) => items.map((item) => {
   if (item.id === updatedItem.id) {
-    item = updatedItem;
+    return updatedItem;
   }
+  return item;
 });
-
 
 export {getRandomInteger, updateItem};
