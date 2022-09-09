@@ -102,7 +102,6 @@ export default class PointPresenter {
   };
 
   #handlePointSave = (point) => {
-    console.log(point)
     this.#changeData({...point});
     this.#replaceEditFormToPoint();
   };
