@@ -19,7 +19,6 @@ const createOffersListTemplate = (offers) => {
 const createPointTemplate = (point) => {
   const {basePrice, destination, startDate, endDate, isFavorite, offers, type} = point;
   const pointName = DESTINATIONS.find((item) => (item.id === destination)).name;
-  console.log(point)
 
   return (
     `<li class="trip-events__item">

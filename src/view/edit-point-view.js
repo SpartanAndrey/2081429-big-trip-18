@@ -240,11 +240,11 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #typeToggleHandler = (evt) => {
-    if (evt.target.tagName.toLowerCase() !== 'label') {
+    if (!evt.target.matches('input[name=event-type]')) {
       return;
     }
 
-    const typeValue = evt.target.textContent.toLowerCase();
+    const typeValue = evt.target.value;
 
     evt.preventDefault();
 
