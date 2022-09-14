@@ -5,6 +5,7 @@ import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByD
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+
 const createDestionationsOptionsTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('\n');
 
 const createAvailableOptionsTemplate = (offersByType, pointType, offers) => {
@@ -154,6 +155,7 @@ export default class PointEditView extends AbstractStatefulView {
       this.#datepicker.destroy();
       this.#datepicker = null;
     }
+
   };
 
   reset = (point) => {
@@ -192,7 +194,8 @@ export default class PointEditView extends AbstractStatefulView {
     );
   };
 
-  #setEndDatepicker = (startDate) => {
+  #setEndDatepicker = () => {
+    const startDate = this._state.startDate;
     this.#datepicker = flatpickr(
       this.element.querySelector('[name = "event-end-time"]'),
       {
@@ -211,11 +214,8 @@ export default class PointEditView extends AbstractStatefulView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
-    Array.from(this.element.querySelectorAll('.event__type-input'))
-      .forEach((typeElement) => typeElement.addEventListener('click', this.#typeToggleHandler));
-    Array.from(this.element.querySelectorAll('.event__offer-checkbox')).forEach((offerElement) => offerElement
-      .addEventListener('click', this.#offerToggleHandler)
-    );
+    this.element.querySelector('.event__type-group').addEventListener('click', this.#typeToggleHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('click', this.#offerToggleHandler);
   };
 
   #pointRollUpHandler = (evt) => {
@@ -240,18 +240,29 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #typeToggleHandler = (evt) => {
+    if (evt.target.tagName.toLowerCase() !== 'label') {
+      return;
+    }
+
+    const typeValue = evt.target.textContent.toLowerCase();
+
     evt.preventDefault();
+
     this.updateElement({
-      type: evt.target.value,
+      type: typeValue,
       offers: [],
-      availableOffersId: OFFERS_BY_TYPE.find((item) => (item.type === evt.target.value)).offers
+      availableOffersId: OFFERS_BY_TYPE.find((item) => (item.type === typeValue)).offers
     });
   };
 
   #offerToggleHandler = (evt) => {
     evt.preventDefault();
+    if (evt.target.tagName.toLowerCase() !== 'label') {
+      return;
+    }
+
     const selectedOffers = this._state.offers;
-    const clickedOffer = parseInt((evt.target.id).match(/\d+/g), 10);
+    const clickedOffer = parseInt((evt.target.htmlFor).match(/\d+/g), 10);
     const clickedOfferId = selectedOffers.indexOf(clickedOffer);
 
     if (clickedOfferId === -1) {
@@ -270,14 +281,12 @@ export default class PointEditView extends AbstractStatefulView {
     this.updateElement({
       startDate: userStartDate,
     });
-    this.#setEndDatepicker(this._state.startDate);
   };
 
   #endDateChangeHandler = ([userEndDate]) => {
     this.updateElement({
       endDate: userEndDate,
     });
-    this.#setEndDatepicker(this._state.startDate);
   };
 
 

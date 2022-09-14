@@ -43,8 +43,8 @@ const isPointPlanned = (dateFrom, dateTo) => dayjs(dateFrom).isAfter(dayjs()) ||
 
 const isPointPassed = (dateFrom, dateTo) => dayjs(dateTo).isBefore(dayjs()) || checkDatesRelativeToCurrent(dateFrom, dateTo);
 
-const checkFavoriteOption = (isFavorite) => (isFavorite) ? 'event__favorite-btn--active' : '';
+const isFavoriteOption = (isFavorite) => (isFavorite) ? 'event__favorite-btn--active' : '';
 
 const capitalizeFirstLetter = (str) => str[0].toUpperCase() + str.slice(1);
 
-export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, checkFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate};
+export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, isFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate};
