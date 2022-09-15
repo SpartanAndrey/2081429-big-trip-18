@@ -5,11 +5,10 @@ import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByD
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-
 const createDestionationsOptionsTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('\n');
 
-const createAvailableOptionsTemplate = (offersByType, pointType, offers) => {
-  const availableOffersId = offersByType.find((item) => (item.type === pointType)).offers;
+const createAvailableOptionsTemplate = (pointType, offers) => {
+  const availableOffersId = OFFERS_BY_TYPE.find((item) => (item.type === pointType)).offers;
 
   const allOffers = availableOffersId.map((offer) => OFFERS.find((item) => item.id === offer));
 
@@ -120,7 +119,7 @@ const createPointEditTemplate = (point) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-          ${createAvailableOptionsTemplate(OFFERS_BY_TYPE, type, offers)}
+          ${createAvailableOptionsTemplate(type, offers)}
           </div>
         </section>
         <section class="event__section  event__section--destination">
@@ -134,7 +133,9 @@ const createPointEditTemplate = (point) => {
   );
 };
 export default class PointEditView extends AbstractStatefulView {
-  #datepicker = null;
+
+  #startDatepicker = null;
+  #endDatepicker = null;
 
   constructor(point) {
     super();
@@ -151,9 +152,14 @@ export default class PointEditView extends AbstractStatefulView {
   removeElement = () => {
     super.removeElement();
 
-    if (this.#datepicker) {
-      this.#datepicker.destroy();
-      this.#datepicker = null;
+    if (this.#startDatepicker) {
+      this.#startDatepicker.destroy();
+      this.#startDatepicker = null;
+    }
+
+    if (this.#endDatepicker) {
+      this.#endDatepicker.destroy();
+      this.#endDatepicker = null;
     }
 
   };
@@ -183,7 +189,7 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #setStartDatepicker = () => {
-    this.#datepicker = flatpickr(
+    this.#startDatepicker = flatpickr(
       this.element.querySelector('[name = "event-start-time"]'),
       {
         enableTime: true,
@@ -196,7 +202,7 @@ export default class PointEditView extends AbstractStatefulView {
 
   #setEndDatepicker = () => {
     const startDate = this._state.startDate;
-    this.#datepicker = flatpickr(
+    this.#endDatepicker = flatpickr(
       this.element.querySelector('[name = "event-end-time"]'),
       {
         enableTime: true,
