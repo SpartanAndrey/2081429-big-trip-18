@@ -5,6 +5,4 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const updateItem = (items, updatedItem) => items.map((item) => item.id === updatedItem.id ? updatedItem : item );
-
-export {getRandomInteger, updateItem};
+export {getRandomInteger};

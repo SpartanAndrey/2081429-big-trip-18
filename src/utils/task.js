@@ -35,6 +35,8 @@ const subtractDates = (dateFrom, dateTo) => {
   return dayjs.duration(diffInTotalMinutes, 'minutes').format('DD[D] HH[H] mm[M]');
 };
 
+const isDatesEqual = (dateA, dateB) => dayjs(dateA).isSame(dateB, 'D');
+
 const isSubmitDisabledByDate = (dateTo, dateFrom) => dayjs(dateTo).diff(dayjs(dateFrom)) <= 0;
 
 const checkDatesRelativeToCurrent = (dateFrom, dateTo) => dayjs(dateFrom).isBefore(dayjs()) && dayjs(dateTo).isAfter(dayjs());
@@ -47,4 +49,4 @@ const isFavoriteOption = (isFavorite) => (isFavorite) ? 'event__favorite-btn--ac
 
 const capitalizeFirstLetter = (str) => str[0].toUpperCase() + str.slice(1);
 
-export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, isFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate};
+export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, isFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate, isDatesEqual};

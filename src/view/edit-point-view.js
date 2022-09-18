@@ -1,7 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { DESTINATIONS } from '../mock/point.js';
 import { OFFERS , OFFERS_BY_TYPE } from '../mock/offers.js';
+import { NEW_POINT } from '../mock/const.js';
 import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByDate } from '../utils/task.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -90,7 +92,7 @@ const createPointEditTemplate = (point) => {
           <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalizeFirstLetter(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${selectedDestination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(selectedDestination.name)}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${createDestionationsOptionsTemplate(DESTINATIONS)}
           </datalist>
@@ -137,7 +139,7 @@ export default class PointEditView extends AbstractStatefulView {
   #startDatepicker = null;
   #endDatepicker = null;
 
-  constructor(point) {
+  constructor(point = NEW_POINT) {
     super();
     this._state = PointEditView.parsePointToState(point);
     this.#setInnerHandlers();
@@ -173,6 +175,7 @@ export default class PointEditView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setPointSaveHandler(this._callback.pointSave);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setPointRollUpHandler(this._callback.pointRollUp);
     this.#setStartDatepicker();
     this.#setEndDatepicker();
@@ -186,6 +189,12 @@ export default class PointEditView extends AbstractStatefulView {
   setPointSaveHandler = (callback) => {
     this._callback.pointSave = callback;
     this.element.querySelector('form').addEventListener('submit', this.#pointSaveHandler);
+  };
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#pointDeleteHandler);
   };
 
   #setStartDatepicker = () => {
@@ -232,6 +241,12 @@ export default class PointEditView extends AbstractStatefulView {
   #pointSaveHandler = (evt) => {
     evt.preventDefault();
     this._callback.pointSave(PointEditView.parseStateToPoint(this._state));
+  };
+
+  #pointDeleteHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.deleteClick(PointEditView.parseStateToPoint(this._state));
   };
 
   #destinationToggleHandler = (evt) => {
