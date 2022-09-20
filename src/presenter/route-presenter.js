@@ -23,6 +23,7 @@ export default class RoutePresenter {
   #filterType = FilterType.EVERYTHING;
 
   constructor(routeContainer, pointsModel, filterModel) {
+
     this.#routeContainer = routeContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
@@ -44,9 +45,10 @@ export default class RoutePresenter {
         return filteredPoints.sort(sortPointsByPrice);
       case SortType.TIME:
         return filteredPoints.sort(sortPointsByDuration);
-    }
+      default:
+        return filteredPoints.sort(sortPointsByDate);
 
-    return filteredPoints.sort(sortPointsByDate);
+    }
   }
 
   init = () => {
@@ -77,6 +79,8 @@ export default class RoutePresenter {
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
         break;
+      default:
+        throw new Error(`Action Type ${actionType} is undefined.`);
     }
   };
 
@@ -93,6 +97,8 @@ export default class RoutePresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      default:
+        throw new Error(`Update Type ${updateType} is undefined.`);
     }
   };
 

@@ -5,4 +5,14 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export {getRandomInteger};
+const getRandomOffersArray = (offers) => {
+
+  if (!offers.length) {
+    return [];
+  }
+
+  return offers.slice(0, getRandomInteger(0, offers.length - 1));
+
+};
+
+export {getRandomInteger, getRandomOffersArray};

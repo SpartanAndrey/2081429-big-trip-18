@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { DESTINATIONS } from '../mock/point.js';
 import { OFFERS , OFFERS_BY_TYPE } from '../mock/offers.js';
 import { NEW_POINT } from '../mock/const.js';
-import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByDate } from '../utils/task.js';
+import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByDate, isSubmitDisabledByPrice } from '../utils/task.js';
 import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -34,6 +34,7 @@ const createPhotosListTemplate = (pictures) => (`<div class="event__photos-conta
     </div>`);
 
 const createPointEditTemplate = (point) => {
+
   const {basePrice, selectedDestination, startDate, endDate, type, offers} = point;
 
   return (
@@ -111,8 +112,8 @@ const createPointEditTemplate = (point) => {
           </label>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabledByDate(startDate, endDate) ? '' : 'disabled'}>Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabledByDate(startDate, endDate) ? '' : 'disabled'} ${isSubmitDisabledByPrice(basePrice) ? '' : 'disabled'}>Save</button>
+        <button class="event__reset-btn" type="reset">${!point.id ? 'Cancel' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -231,6 +232,7 @@ export default class PointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
     this.element.querySelector('.event__type-group').addEventListener('click', this.#typeToggleHandler);
     this.element.querySelector('.event__available-offers').addEventListener('click', this.#offerToggleHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceToggleHandler);
   };
 
   #pointRollUpHandler = (evt) => {
@@ -252,7 +254,9 @@ export default class PointEditView extends AbstractStatefulView {
   #destinationToggleHandler = (evt) => {
     evt.preventDefault();
 
-    if (evt.target.value !== '') {
+    const findDestinationIndex = DESTINATIONS.findIndex((item) => (item.name === evt.target.value));
+
+    if (findDestinationIndex !== -1) {
       this.updateElement({
         selectedDestination: DESTINATIONS.find((item) => (item.name === evt.target.value)),
       });
@@ -278,12 +282,11 @@ export default class PointEditView extends AbstractStatefulView {
 
   #offerToggleHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.tagName.toLowerCase() !== 'label') {
-      return;
-    }
+
+    const clickedElementInput = evt.target.closest('div').childNodes[1];
 
     const selectedOffers = this._state.offers;
-    const clickedOffer = parseInt((evt.target.htmlFor).match(/\d+/g), 10);
+    const clickedOffer = parseInt((clickedElementInput.id).match(/\d+/g), 10);
     const clickedOfferId = selectedOffers.indexOf(clickedOffer);
 
     if (clickedOfferId === -1) {
@@ -295,6 +298,14 @@ export default class PointEditView extends AbstractStatefulView {
 
     this.updateElement({
       offers: updatedSelectedOffers
+    });
+  };
+
+  #priceToggleHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+      basePrice: evt.target.value
     });
   };
 

@@ -2,7 +2,18 @@ import dayjs from 'dayjs';
 
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const OFFER_TITLES = ['Upgrade to a business class', 'Switch to comfort', 'Rent a car', 'Add breakfast', 'Order taxi', 'Add luggage'];
+const OFFER_TITLES = [
+  'Add breakfast',
+  'Add luggage',
+  'Add late check-out',
+  'Room with a beautiful view',
+  'Order a taxi',
+  'Switch to comfort',
+  'Switch to business',
+  'Rent a car',
+  'Upgrade to business class',
+  'Upgrade to Space+ Seat',
+];
 
 const FilterType = {
   EVERYTHING: 'everything',
