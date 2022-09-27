@@ -41,6 +41,12 @@ const isSubmitDisabledByDate = (dateTo, dateFrom) => dayjs(dateTo).diff(dayjs(da
 
 const isSubmitDisabledByPrice = (price) => Number(price) > 0 && Number.isInteger(Number(price));
 
+const isSubmitDisabledByDestinationName = (name, allDestinations) => {
+  const allDestinationNames = Array.from(allDestinations, (it) => it.name);
+
+  return allDestinationNames.includes(name);
+};
+
 const checkDatesRelativeToCurrent = (dateFrom, dateTo) => dayjs(dateFrom).isBefore(dayjs()) && dayjs(dateTo).isAfter(dayjs());
 
 const isPointPlanned = (dateFrom, dateTo) => dayjs(dateFrom).isAfter(dayjs()) || checkDatesRelativeToCurrent(dateFrom, dateTo);
@@ -51,4 +57,4 @@ const isFavoriteOption = (isFavorite) => (isFavorite) ? 'event__favorite-btn--ac
 
 const capitalizeFirstLetter = (str) => str[0].toUpperCase() + str.slice(1);
 
-export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, isFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate, isSubmitDisabledByPrice, isDatesEqual};
+export {convertPointDateIntoDay, convertPointDateIntoHour, convertPointDateForEditForm, generateDates, subtractDates, isFavoriteOption, capitalizeFirstLetter, isPointPlanned, isPointPassed, isSubmitDisabledByDate, isSubmitDisabledByPrice, isDatesEqual, isSubmitDisabledByDestinationName};
