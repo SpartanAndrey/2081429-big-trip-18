@@ -34,7 +34,6 @@ const handleNewPointButtonClick = () => {
 };
 
 
-tripInfoPresenter.init();
 filterPresenter.init();
 routePresenter.init();
 pointsModel.init()
@@ -42,3 +41,4 @@ pointsModel.init()
     render(newPointButtonComponent, tripMainElement);
     newPointButtonComponent.setClickHandler(handleNewPointButtonClick);
   });
+tripInfoPresenter.init();

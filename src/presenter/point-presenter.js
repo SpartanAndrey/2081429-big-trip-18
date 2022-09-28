@@ -2,7 +2,6 @@ import { render, replace, remove } from '../framework/render.js';
 import PointEditView from '../view/edit-point-view.js';
 import PointView from '../view/point-view.js';
 import { UserAction, UpdateType } from '../const.js';
-import { isDatesEqual } from '../utils/task.js';
 
 const Mode = {
   DEFAULT: 'default',
@@ -155,11 +154,10 @@ export default class PointPresenter {
   };
 
   #handlePointSave = (update) => {
-    const isMinorUpdate = isDatesEqual(this.#point.startDate, update.startDate);
 
     this.#changeData(
       UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       update,
     );
   };

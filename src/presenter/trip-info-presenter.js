@@ -34,8 +34,10 @@ export default class TripInfoPresenter {
       remove(this.#tripInfoComponent);
     }
 
-    this.#tripInfoComponent = new TripInfoView(this.points, this.offers, this.destinations);
-    render(this.#tripInfoComponent, this.#tripInfoContainer, RenderPosition.AFTERBEGIN);
+    if(this.points.length !== 0) {
+      this.#tripInfoComponent = new TripInfoView(this.points, this.offers, this.destinations);
+      render(this.#tripInfoComponent, this.#tripInfoContainer, RenderPosition.AFTERBEGIN);
+    }
   };
 
 
@@ -49,6 +51,7 @@ export default class TripInfoPresenter {
   };
 
   #handleModelEvent = () => {
+
     this.init();
   };
 

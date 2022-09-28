@@ -13,6 +13,25 @@ const addOffersPrices = (pointType, pointOffers, allOffers) => {
 
 const addDestinationName = (pointDestination, allDestinations) => allDestinations.find((item) => item.id === pointDestination).name;
 
+const getTripDestinationNames = (points) => {
+
+  const tripDestinationNames = points.map((point) => point.destinationName);
+
+  const uniqueNames = Array.from(new Set(tripDestinationNames));
+
+  switch (uniqueNames.length) {
+    case 1:
+      return `${uniqueNames[0]}`;
+    case 2:
+      return `${uniqueNames[0]} &mdash; ${uniqueNames[1]}`;
+    case 3:
+      return `${uniqueNames[0]} &mdash; ${uniqueNames[1]} &mdash; ${uniqueNames[2]}`;
+    default:
+      return `${uniqueNames[0]} &mdash; ... &mdash;${uniqueNames[uniqueNames.length - 1]}`;
+  }
+
+};
+
 const getTripPrice = (points) => {
 
   const totalBasePrice = points.reduce((total, point) => total + point.basePrice, 0);
@@ -22,10 +41,11 @@ const getTripPrice = (points) => {
 };
 
 const getTripDates = (points) => {
-  const startTripDate = dayjs(points[0]).startDate;
-  const endTripDate = dayjs(points[-1]).endDate;
 
-  if (startTripDate.month() === endTripDate.month()) {
+  const startTripDate = points[0].startDate;
+  const endTripDate = points[points.length - 1].endDate;
+
+  if (dayjs(startTripDate).month() === dayjs(endTripDate).month()) {
     return `${dayjs(startTripDate).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(endTripDate).format('DD')}`;
   }
 
@@ -40,9 +60,9 @@ const createTripInfoTemplate = (points, allOffers, allDestinations) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
-    <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+    <h1 class="trip-info__title">${getTripDestinationNames(tripPoints)}</h1>
 
-    <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+    <p class="trip-info__dates">${getTripDates(tripPoints)}</p>
   </div>
 
   <p class="trip-info__cost">

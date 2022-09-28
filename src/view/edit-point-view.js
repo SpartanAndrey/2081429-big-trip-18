@@ -1,14 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { NEW_POINT } from '../const.js';
-import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByDate, isSubmitDisabledByPrice, isSubmitDisabledByDestinationName } from '../utils/task.js';
+import { convertPointDateForEditForm, capitalizeFirstLetter, isSubmitDisabledByDate, isSubmitDisabledByPrice, isSubmitDisabledByDestinationName } from '../utils/point.js';
 import dayjs from 'dayjs';
 import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const findOffersForType = (pointType, allOffers) => allOffers.find((item) => item.type === pointType).offers;
+const findOffersForType = (pointType, allOffers) => allOffers.find(({ type }) => type === pointType).offers;
 
-const createDestionationsOptionsTemplate = (allDestinations) => allDestinations.map((destination) => `<option value="${destination.name}"></option>`).join('\n');
+const createDestionationsOptionsTemplate = (allDestinations) => allDestinations.map(({ name }) => `<option value="${name}"></option>`).join('\n');
 
 const createAvailableOptionsTemplate = (pointOffers, allOffersForType) => allOffersForType.map((offer) => `<div class="event__offer-selector" >
   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').pop()}-${offer.id}" type="checkbox" name="event-offer-${offer.title.split(' ').pop()}" ${pointOffers.includes(offer.id) ? 'checked' : ''}>
@@ -21,7 +21,7 @@ const createAvailableOptionsTemplate = (pointOffers, allOffersForType) => allOff
 
 const getSelectedDestinationData = (destinationName, allDestinations) => {
 
-  const selectedDestinationData = allDestinations.find((item) => item.name === destinationName);
+  const selectedDestinationData = allDestinations.find(({ name }) => name === destinationName);
 
   if (selectedDestinationData === undefined) {
     return {
@@ -40,6 +40,11 @@ const createPhotosListTemplate = (pictures) => (`<div class="event__photos-conta
     </div>
     </div>`
 );
+
+const createTypeListTemplate = (allOffers) => allOffers.map(({ type }) => `<div class="event__type-item">
+  <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+  <label class="event__type-label  event__type-label--${type}" for="event-type-${type}">${capitalizeFirstLetter(type)}</label>
+</div>`).join('\n');
 
 const createPointEditTemplate = (point, allOffers, allDestinations) => {
 
@@ -64,42 +69,7 @@ const createPointEditTemplate = (point, allOffers, allDestinations) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${createTypeListTemplate(allOffers)}
             </fieldset>
           </div>
         </div>
@@ -224,7 +194,7 @@ export default class PointEditView extends AbstractStatefulView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         'time_24hr': true,
-        onChange: this.#startDateChangeHandler
+        onChange: this.#startDateChangeHandler,
       },
     );
   };
@@ -262,7 +232,6 @@ export default class PointEditView extends AbstractStatefulView {
 
   #pointSaveHandler = (evt) => {
     evt.preventDefault();
-    console.log(PointEditView.parseStateToPoint(this._state, this.#allDestinations))
 
     this._callback.pointSave(PointEditView.parseStateToPoint(this._state, this.#allDestinations));
   };
