@@ -32,10 +32,9 @@ const getTripDestinationNames = (points) => {
 
 const getTripPrice = (points) => {
 
-  const totalBasePrice = points.reduce((total, point) => total + point.basePrice, 0);
-  const totalOffersPrice = points.reduce((total, point) => total + point.offerPrices, 0);
+  const totalPrice = points.reduce((total, point) => total + point.basePrice + point.offerPrices, 0);
 
-  return totalBasePrice + totalOffersPrice;
+  return totalPrice;
 };
 
 const getTripDates = (points) => {

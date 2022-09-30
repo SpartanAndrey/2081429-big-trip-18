@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
-  PAST: 'past'
+  PAST: 'past',
 };
 
 const SortType = {
